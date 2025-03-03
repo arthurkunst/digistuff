@@ -1,3 +1,5 @@
+This is a fork from mt-mods/digistuff that only adds a presssureplate compatible with digilines.
+
 # Digilines Stuff [digistuff]
 
 [![luacheck](https://github.com/mt-mods/digistuff/workflows/luacheck/badge.svg)](https://github.com/mt-mods/digistuff/actions)
