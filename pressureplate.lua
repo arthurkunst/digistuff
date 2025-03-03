@@ -62,11 +62,17 @@ local function pp_on_timer(pos) -- pressure plate timer function, call every 0.1
 	local objs = minetest.get_objects_inside_radius(pos, 1)
 	local obj_touching = false
     local player_name = nil
+    local item_name = nil
 	for k, obj in pairs(objs) do
 		if obj_touching_plate_pos(obj, pos) then
 			obj_touching = true
             if obj:is_player() then
                 player_name = obj:get_player_name()
+            else
+                local lua_entity = obj:get_luaentity()
+                if lua_entity and lua_entity.name == "__builtin:item" then -- get item name from dropped item
+                    item_name = ItemStack(lua_entity.itemstring):get_name()
+                end
             end
 			break
 		end
@@ -88,8 +94,10 @@ local function pp_on_timer(pos) -- pressure plate timer function, call every 0.1
         if player_name then -- object is a player
             digilines.receptor_send(pos, digistuff.button_get_rules(node), channel, {player_name, msg})
             minetest.sound_play("digistuff_piston_retract", {pos=pos})
-        else -- object is not a player
-            digilines.receptor_send(pos, digistuff.button_get_rules(node), channel, msg)
+        else 
+            if item_name ~= nil then -- object is not a player
+                digilines.receptor_send(pos, digistuff.button_get_rules(node), channel, {item_name, msg})
+            end
         end
 	end
 	return true
